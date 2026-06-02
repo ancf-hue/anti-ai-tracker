@@ -1,0 +1,14 @@
+# robots.txt для проекта Anti-AI Tracker
+# Сайт: https://anti-ai-tracker.vercel.app/
+
+# Разрешаем сканирование всем поисковым роботам
+User-agent: *
+Allow: /
+
+# Запрещаем сканирование служебных путей (на всякий случай)
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Указываем путь к карте сайта
+Sitemap: https://anti-ai-tracker.vercel.app/sitemap.xml
