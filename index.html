@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Анти-ИИ Следопыт — Чей это след?</title>
+    <title>Anti-AI Tracker — Чей это след?</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         * {
@@ -16,7 +16,7 @@
         body {
             min-height: 100vh;
             background: #050b14;
-            font-family: 'Segoe UI', 'Comic Neue', cursive, sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Comic Sans MS", cursive, sans-serif;
             position: relative;
             overflow-x: hidden;
         }
@@ -47,6 +47,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 0 #1d4ed8, 0 6px 15px rgba(37, 99, 235, 0.4);
+            touch-action: manipulation;
         }
         .nav-btn:hover { transform: translateY(-2px); }
         .nav-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1d4ed8; }
@@ -162,12 +163,15 @@
             padding: 12px;
             overflow: hidden;
             cursor: pointer;
+            touch-action: manipulation;
         }
         .track-center img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             border-radius: 50%;
+            /* КЛИКИ ПРОХОДЯТ СКВОЗЬ КАРТИНКУ ПРЯМО В БЛОК */
+            pointer-events: none; 
         }
         .track-center.correct {
             background: rgba(46, 204, 113, 0.25);
@@ -185,6 +189,7 @@
             height: 22%;
             max-width: 85px;
             max-height: 85px;
+            aspect-ratio: 1 / 1;
             background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f1f5f9 100%);
             border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.8);
@@ -196,6 +201,7 @@
             z-index: 10;
             box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0, 0, 0, 0.4), inset 0 2px 8px rgba(255, 255, 255, 1), 0 0 0 3px rgba(96, 165, 250, 0.6);
             transition: all 0.08s;
+            touch-action: manipulation;
         }
         .animal-option:hover { transform: translateY(-3px); }
         .animal-option:active { transform: translateY(6px) scale(0.95) !important; }
@@ -215,7 +221,7 @@
             width: 100%; height: 100%;
             background: rgba(5, 10, 20, 0.95);
             backdrop-filter: blur(20px);
-            z-index: 200;
+            z-index: 2000;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -254,11 +260,12 @@
             cursor: pointer;
             margin: 10px 0;
             box-shadow: 0 5px 0 #1d4ed8;
+            touch-action: manipulation;
         }
         .restart-button:active { transform: translateY(4px); box-shadow: none; }
         
-        /* 🔹 БЛОК ПОДДЕРЖКИ 🔹 */
-        .support-block {
+        /* 🔹 БЛОК ПОДДЕРЖКИ (ОБЩИЙ И МОДАЛЬНЫЙ) 🔹 */
+        .support-block, .modal-support {
             margin-top: 25px;
             padding: 20px 15px;
             background: rgba(5, 15, 30, 0.7);
@@ -268,7 +275,7 @@
             text-align: center;
             border: 1px solid rgba(96, 165, 250, 0.3);
         }
-        .support-title {
+        .support-title, .modal-support-title {
             font-size: 1.1rem;
             font-weight: bold;
             display: flex;
@@ -278,13 +285,13 @@
             margin-bottom: 8px;
             color: #60a5fa;
         }
-        .support-text {
+        .support-text, .modal-support-text {
             font-size: 0.8rem;
             opacity: 0.95;
             margin: 5px 0;
             line-height: 1.4;
         }
-        .phone-box {
+        .phone-box, .modal-phone-box {
             background: rgba(0, 10, 20, 0.5);
             border: 1px solid rgba(96,130,246,0.4);
             border-radius: 14px;
@@ -296,13 +303,13 @@
             gap: 8px;
             backdrop-filter: blur(4px);
         }
-        .phone-label {
+        .phone-label, .modal-phone-label {
             font-size: 0.7rem;
             color: #94a3b8;
             margin-bottom: 2px;
             text-align: left;
         }
-        .phone-num {
+        .phone-num, .modal-phone-num {
             font-family: monospace;
             font-size: 0.95rem;
             font-weight: bold;
@@ -310,7 +317,7 @@
             text-shadow: 0 0 6px rgba(147, 197, 253, 0.5);
             letter-spacing: 0.5px;
         }
-        .btn-copy {
+        .btn-copy, .modal-btn-copy {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             font-size: 0.7rem;
@@ -322,21 +329,22 @@
             white-space: nowrap;
             box-shadow: 0 2px 0 #1e408a;
             font-weight: bold;
+            touch-action: manipulation;
         }
-        .btn-copy:active { transform: translateY(2px); box-shadow: none; }
-        .security-note {
+        .btn-copy:active, .modal-btn-copy:active { transform: translateY(2px); box-shadow: none; }
+        .security-note, .modal-security-note {
             font-size: 0.7rem;
             color: #86efac;
             margin: 8px 0;
             text-shadow: 0 0 4px rgba(134,239,172,0.3);
         }
-        .thanks {
+        .thanks, .modal-thanks {
             font-size: 0.8rem;
             color: #f9a8d4;
             margin: 8px 0;
             font-weight: 500;
         }
-        .main-link {
+        .main-link, .modal-main-link {
             display: inline-block;
             font-size: 0.75rem;
             color: #86efac;
@@ -349,11 +357,11 @@
             transition: all 0.2s;
             background: rgba(134,239,172,0.05);
         }
-        .main-link:hover {
+        .main-link:hover, .modal-main-link:hover {
             background: rgba(134,239,172,0.15);
             transform: translateY(-1px);
         }
-        .catalog-desc {
+        .catalog-desc, .modal-catalog-desc {
             font-size: 0.65rem;
             color: #64748b;
             margin-top: 8px;
@@ -396,11 +404,13 @@
             cursor: pointer;
             transition: transform 0.3s;
             z-index: 10;
+            touch-action: manipulation;
         }
         .animal-node:hover { transform: scale(1.12); z-index: 20; }
         .animal-icon {
             width: 80px;
             height: 80px;
+            aspect-ratio: 1 / 1;
             background: rgba(255,255,255,0.95);
             border-radius: 50%;
             display: flex;
@@ -456,6 +466,7 @@
             background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
             text-align: center;
             cursor: pointer;
+            touch-action: manipulation;
         }
         .track-card-header:hover {
             background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
@@ -479,6 +490,14 @@
             flex-direction: column;
             gap: 0;
         }
+        .track-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-align: center;
+        }
         .track-image-animal {
             width: 100%;
             height: 250px;
@@ -495,14 +514,6 @@
             padding: 15px;
         }
         .track-info { padding: 18px; }
-        .track-label {
-            font-size: 0.75rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            text-align: center;
-        }
         .track-description {
             font-size: 0.85rem;
             color: #555;
@@ -571,6 +582,7 @@
             transition: all 0.25s;
             text-align: center;
             font-size: 0.95rem;
+            touch-action: manipulation;
         }
         .option:hover { border-color: #764ba2; transform: translateY(-1px); }
         .option.correct { background: #dcfce7; border-color: #22c55e; color: #166534; }
@@ -603,17 +615,37 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.25s;
+            touch-action: manipulation;
         }
         .quiz-nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.35); }
         
-        .sound-icon-small {
-            font-size: 0.8rem;
-            margin-left: 8px;
+        /* 🔹 СООБЩЕНИЕ О РАЗБЛОКИРОВКЕ ЗВУКА 🔹 */
+        .audio-unlock-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            animation: pulse 1.5s infinite;
             cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+            touch-action: manipulation;
         }
-        .sound-icon-small:hover { opacity: 1; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+        }
         
         @media (max-width: 600px) {
             .main-nav { padding: 6px 8px; gap: 6px; }
@@ -630,10 +662,16 @@
             .track-image-animal { height: 200px; }
             .track-image-track { height: 280px; }
             .track-center { width: 45%; height: 45%; }
+            .audio-unlock-message { font-size: 0.75rem; padding: 8px 16px; bottom: 10px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- 🔹 СООБЩЕНИЕ ДЛЯ РАЗБЛОКИРОВКИ ЗВУКА 🔹 -->
+    <div id="audioUnlockMessage" class="audio-unlock-message">
+        🔊 Нажмите здесь, чтобы включить звук
+    </div>
 
     <!-- 🔹 НАВИГАЦИЯ 🔹 -->
     <nav class="main-nav">
@@ -674,11 +712,12 @@
                 </div>
                 <p class="security-note">✅ Деньги придут мгновенно. Без комиссии. Безопасно.</p>
                 <p class="thanks">❤️ Спасибо за поддержку!</p>
+                <p class="support-text" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.8;">✉️ По вопросам сотрудничества: an.cf@yandex.ru</p>
                 <a href="https://ancf-hue.github.io/" target="_blank" class="main-link">🌟 👉 https://ancf-hue.github.io/</a>
                 <p class="catalog-desc">Каталог бесплатных офлайн-приложений Anti-AI Shield.</p>
             </div>
             
-            <footer>🐾 Отгадай 10 следов и стань следопытом!</footer>
+            <footer style="text-align: center; margin-top: 15px; font-size: 0.8rem; opacity: 0.7;">🐾 Отгадай 10 следов и стань следопытом!</footer>
         </div>
     </section>
 
@@ -704,6 +743,7 @@
                 </div>
                 <p class="security-note">✅ Деньги придут мгновенно. Без комиссии. Безопасно.</p>
                 <p class="thanks">❤️ Спасибо за поддержку!</p>
+                <p class="support-text" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.8;">✉️ По вопросам сотрудничества: an.cf@yandex.ru</p>
                 <a href="https://ancf-hue.github.io/" target="_blank" class="main-link">🌟 👉 https://ancf-hue.github.io/</a>
                 <p class="catalog-desc">Каталог бесплатных офлайн-приложений Anti-AI Shield.</p>
             </div>
@@ -739,6 +779,7 @@
                 </div>
                 <p class="security-note">✅ Деньги придут мгновенно. Без комиссии. Безопасно.</p>
                 <p class="thanks">❤️ Спасибо за поддержку!</p>
+                <p class="support-text" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.8;">✉️ По вопросам сотрудничества: an.cf@yandex.ru</p>
                 <a href="https://ancf-hue.github.io/" target="_blank" class="main-link">🌟 👉 https://ancf-hue.github.io/</a>
                 <p class="catalog-desc">Каталог бесплатных офлайн-приложений Anti-AI Shield.</p>
             </div>
@@ -766,6 +807,7 @@
                 </div>
                 <p class="modal-security-note">✅ Деньги придут мгновенно. Без комиссии. Безопасно.</p>
                 <p class="modal-thanks">❤️ Спасибо за поддержку!</p>
+                <p class="modal-support-text" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.8;">✉️ По вопросам сотрудничества: an.cf@yandex.ru</p>
                 <a href="https://ancf-hue.github.io/" target="_blank" class="modal-main-link">🌟 👉 https://ancf-hue.github.io/</a>
                 <p class="modal-catalog-desc">Каталог бесплатных офлайн-приложений Anti-AI Shield.</p>
             </div>
@@ -789,30 +831,81 @@
               description: "Лапа с чёткими перепонками между пальцами. Три основных пальца соединены перепонкой." }
         ];
 
-        // Создаем аудио элементы
         const audioElements = {};
         
         function initAudioElements() {
             animalsLibrary.forEach(animal => {
                 const audio = new Audio(animal.soundFile);
                 audio.preload = 'auto';
+                audio.addEventListener('error', (e) => {
+                    console.error(`❌ ОШИБКА: Не удалось загрузить звук "${animal.soundFile}". Проверьте наличие файла.`);
+                });
                 audioElements[animal.name] = audio;
+            });
+        }
+        
+        // ===== РАЗРЕШЕНИЕ АУДИО (СИНХРОННОЕ И НАДЕЖНОЕ) =====
+        let audioAllowed = false;
+        
+        function enableAudioOnFirstInteraction() {
+            if (audioAllowed) return;
+            
+            // МГНОВЕННОЕ включение флага до асинхронных операций
+            audioAllowed = true;
+            
+            // Трюк с base64 "тихим" звуком для гарантированной разблокировки в iOS/Chrome
+            const silentBase64 = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+            const unlockAudio = new Audio(silentBase64);
+            unlockAudio.play().then(() => {
+                console.log('✅ Аудио успешно разблокировано браузером!');
+                const msg = document.getElementById('audioUnlockMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => { msg.style.display = 'none'; }, 300);
+                }
+            }).catch(e => {
+                console.log('⏳ Браузер всё ещё блокирует автозапуск.', e);
+            });
+        }
+        
+        document.body.addEventListener('click', enableAudioOnFirstInteraction, { once: true });
+        document.body.addEventListener('touchstart', enableAudioOnFirstInteraction, { once: true });
+        
+        const unlockMsg = document.getElementById('audioUnlockMessage');
+        if (unlockMsg) {
+            unlockMsg.addEventListener('click', () => {
+                enableAudioOnFirstInteraction();
+                unlockMsg.style.opacity = '0';
+                setTimeout(() => { unlockMsg.style.display = 'none'; }, 300);
             });
         }
         
         function playAnimalSound(animalName) {
             const audio = audioElements[animalName];
-            if (audio) {
-                // Останавливаем все звуки
-                Object.values(audioElements).forEach(a => {
-                    if (a !== audio) {
-                        a.pause();
-                        a.currentTime = 0;
-                    }
+            if (!audio) {
+                console.warn(`⚠️ Звук для "${animalName}" не найден в базе данных!`);
+                return;
+            }
+
+            if (!audioAllowed) {
+                console.log('🔇 Звук заблокирован. Активируем принудительно...');
+                enableAudioOnFirstInteraction();
+            }
+
+            Object.values(audioElements).forEach(a => {
+                if (a !== audio) {
+                    a.pause();
+                    a.currentTime = 0;
+                }
+            });
+
+            audio.currentTime = 0;
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error(`❌ Ошибка воспроизведения ${animalName}:`, error);
                 });
-                // Воспроизводим нужный
-                audio.currentTime = 0;
-                audio.play().catch(e => console.log('Audio play error:', e));
             }
         }
 
@@ -836,6 +929,7 @@
                 document.querySelectorAll('.nav-btn')[2].classList.add('active');
                 initQuiz();
             }
+            window.scrollTo(0, 0);
         }
 
         // ===== ИГРА =====
@@ -896,24 +990,15 @@
             currentRoundAnimal = deck[Math.floor(Math.random() * deck.length)];
             trackCenterDiv.innerHTML = `<img src="${currentRoundAnimal.trackImage}" alt="след" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23666\'/%3E%3Ctext x=\'50\' y=\'55\' text-anchor=\'middle\' fill=\'white\' font-size=\'12\'%3E?%3C/text%3E%3C/svg%3E'">`;
             
-            // 🔹 ОЗВУЧКА НА СТРАНИЦЕ ИГРЫ: клик по следу воспроизводит звук животного
-            trackCenterDiv.onclick = () => playAnimalSound(currentRoundAnimal.name);
+            // Двойная страховка: разблокируем звук прямо в момент клика
+            trackCenterDiv.onclick = () => {
+                enableAudioOnFirstInteraction();
+                playAnimalSound(currentRoundAnimal.name);
+            };
             
             for (let i = 0; i < animalButtons.length && i < deck.length; i++) {
                 animalButtons[i].textContent = deck[i].icon;
                 animalButtons[i].dataset.animalName = deck[i].name;
-                
-                // 🔹 ДОБАВЛЯЕМ ОЗВУЧКУ ПРИ НАВЕДЕНИИ НА КНОПКИ ЖИВОТНЫХ (опционально)
-                // При клике на кнопку животного - тоже звук (кроме основного функционала)
-                animalButtons[i].addEventListener('mouseenter', () => {
-                    if (!canClick) return;
-                    playAnimalSound(deck[i].name);
-                });
-                // Для touch устройств
-                animalButtons[i].addEventListener('touchstart', (e) => {
-                    if (!canClick) return;
-                    playAnimalSound(deck[i].name);
-                });
             }
             setTimeout(() => arrangeButtonsInCircle(animalButtons), 10);
         }
@@ -930,7 +1015,6 @@
                 userScore++;
                 document.getElementById('scoreValue').textContent = userScore;
                 trackCenterDiv.classList.add('correct');
-                // 🔹 ПРИ ПРАВИЛЬНОМ ОТВЕТЕ ТОЖЕ ВОСПРОИЗВОДИМ ЗВУК
                 playAnimalSound(currentRoundAnimal.name);
                 if (timeoutId) clearTimeout(timeoutId);
                 timeoutId = setTimeout(() => { currentStepNumber++; startRound(); timeoutId = null; }, 1200);
@@ -1098,7 +1182,6 @@
             if (selected === correct) {
                 quizScore++;
                 document.getElementById('quizScore').textContent = quizScore;
-                // 🔹 ОЗВУЧКА В ВИКТОРИНЕ ПРИ ПРАВИЛЬНОМ ОТВЕТЕ
                 playAnimalSound(soundAnimal);
             } else {
                 element.classList.add('wrong');
@@ -1112,7 +1195,7 @@
             createQuiz();
         }
 
-        // ===== КОПИРОВАНИЕ НОМЕРА =====
+        // ===== КОПИРОВАНИЕ НОМЕРА (УСТОЙЧИВАЯ ВЕРСИЯ ДЛЯ file://) =====
         function initCopySupport(copyBtnId, numId) {
             const copyBtn = document.getElementById(copyBtnId);
             const numToCopy = document.getElementById(numId);
@@ -1120,19 +1203,46 @@
                 copyBtn.addEventListener('click', async () => {
                     const num = numToCopy.textContent;
                     const originalText = copyBtn.textContent;
+                    let success = false;
+                    
                     try {
-                        await navigator.clipboard.writeText(num);
-                        copyBtn.textContent = "✅ Скопировано!";
+                        // Пытаемся использовать современный API (работает на http:// и https://)
+                        if (navigator.clipboard && window.isSecureContext) {
+                            await navigator.clipboard.writeText(num);
+                            success = true;
+                        } else {
+                            throw new Error('Небезопасный контекст (file://)');
+                        }
                     } catch {
-                        const temp = document.createElement('textarea');
-                        temp.value = num;
-                        document.body.appendChild(temp);
-                        temp.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(temp);
-                        copyBtn.textContent = "✅ Скопировано!";
+                        // Резервный метод для file://
+                        try {
+                            const temp = document.createElement('textarea');
+                            temp.value = num;
+                            temp.style.position = 'fixed';
+                            temp.style.left = '-9999px';
+                            document.body.appendChild(temp);
+                            temp.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(temp);
+                            success = true;
+                        } catch (e) {
+                            success = false;
+                        }
                     }
-                    setTimeout(() => { copyBtn.textContent = originalText; }, 1800);
+
+                    if (success) {
+                        copyBtn.textContent = "✅ Скопировано!";
+                    } else {
+                        copyBtn.textContent = "⚠️ Выделите вручную";
+                        // Помощь пользователю: выделяем текст номера, чтобы он мог нажать Ctrl+C
+                        const range = document.createRange();
+                        range.selectNodeContents(numToCopy);
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                    
+                    setTimeout(() => { copyBtn.textContent = originalText; }, 2000);
                 });
             }
         }
